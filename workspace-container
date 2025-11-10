@@ -59,19 +59,20 @@ build_image() {
     log_info "Building container image: ${IMAGE_NAME}"
     
     # Get current user UID and GID
-    local uid=$(id -u)
-    local gid=$(id -g)
-    local username=$(whoami)
+    local uid
+    local gid
+    local username
+    uid=$(id -u)
+    gid=$(id -g)
+    username=$(whoami)
     
-    podman build \
+    if podman build \
         --build-arg USERNAME="${username}" \
         --build-arg USER_UID="${uid}" \
         --build-arg USER_GID="${gid}" \
         -t "${IMAGE_NAME}" \
         -f "${dockerfile_path}" \
-        "$(dirname "${dockerfile_path}")"
-    
-    if [ $? -eq 0 ]; then
+        "$(dirname "${dockerfile_path}")"; then
         log_success "Image built successfully: ${IMAGE_NAME}"
     else
         log_error "Failed to build image"
@@ -140,16 +141,14 @@ create_container() {
     done
     
     # Create the container
-    podman create \
+    if podman create \
         --name "${container_name}" \
         --hostname "${container_name}" \
         --network host \
         ${volumes} \
         -v "${home_dir}:/host-home:ro" \
         -it \
-        "${IMAGE_NAME}"
-    
-    if [ $? -eq 0 ]; then
+        "${IMAGE_NAME}"; then
         add_to_container_list "${container_name}"
         log_success "Container '${container_name}' created successfully"
         log_info "Use '${SCRIPT_NAME} enter ${container_name}' to enter the container"
@@ -200,9 +199,8 @@ destroy_container() {
     
     # Stop and remove the container
     podman stop "${container_name}" 2>/dev/null || true
-    podman rm -f "${container_name}"
     
-    if [ $? -eq 0 ]; then
+    if podman rm -f "${container_name}"; then
         remove_from_container_list "${container_name}"
         log_success "Container '${container_name}' destroyed successfully"
     else
@@ -224,7 +222,8 @@ list_containers() {
     
     while IFS= read -r container_name; do
         if podman container exists "${container_name}" 2>/dev/null; then
-            local status=$(podman inspect -f '{{.State.Status}}' "${container_name}")
+            local status
+            status=$(podman inspect -f '{{.State.Status}}' "${container_name}")
             echo "  - ${container_name} (${status})"
         else
             # Container was removed outside of this tool
