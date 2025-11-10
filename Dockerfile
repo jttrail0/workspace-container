@@ -1,5 +1,5 @@
 # Use Fedora base image
-FROM fedora:38
+FROM fedora:43
 
 # Install packages via dnf
 RUN dnf -y update && dnf -y install \
@@ -28,9 +28,18 @@ ARG USERNAME=devuser
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN /bin/sh -c '\
+    if ! getent group "$USER_GID" >/dev/null 2>&1; then \
+        groupadd --gid "$USER_GID" "$USERNAME"; \
+    else \
+        echo "group with GID $USER_GID already exists"; \
+    fi && \
+    if ! id -u "$USERNAME" >/dev/null 2>&1; then \
+        useradd --uid "$USER_UID" --gid "$USER_GID" -m "$USERNAME"; \
+    else \
+        echo "user $USERNAME already exists"; \
+    fi && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers'
 
 # Copy helper CLI into image and make executable
 # (copied before switching to non-root user)
