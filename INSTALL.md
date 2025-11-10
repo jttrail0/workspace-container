@@ -29,19 +29,19 @@ git clone https://github.com/jttrail0/workspace-container.git
 cd workspace-container
 
 # The script is already executable, but verify:
-chmod +x workspace-container
+chmod +x wsc
 
 # Optionally, add to your PATH by adding this to ~/.zshrc or ~/.bashrc:
 export PATH="$PATH:$(pwd)"
 
 # Or create a symlink (recommended):
-sudo ln -s $(pwd)/workspace-container /usr/local/bin/workspace-container
+sudo ln -s $(pwd)/wsc /usr/local/bin/wsc
 ```
 
 ### 4. Verify Installation
 
 ```bash
-workspace-container help
+wsc help
 ```
 
 ## Linux Installation
@@ -72,20 +72,20 @@ git clone https://github.com/jttrail0/workspace-container.git
 cd workspace-container
 
 # The script is already executable, but verify:
-chmod +x workspace-container
+chmod +x wsc
 
 # Add to your PATH:
 echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
 source ~/.bashrc
 
 # Or create a symlink:
-sudo ln -s $(pwd)/workspace-container /usr/local/bin/workspace-container
+sudo ln -s $(pwd)/wsc /usr/local/bin/wsc
 ```
 
 ### 3. Verify Installation
 
 ```bash
-workspace-container help
+wsc help
 ```
 
 ## First Run
@@ -94,7 +94,7 @@ After installation, create your first container:
 
 ```bash
 # Create default container (will build the image on first run)
-workspace-container create
+wsc create
 
 # This will:
 # 1. Build the Docker image with all tools (takes a few minutes)
@@ -102,7 +102,7 @@ workspace-container create
 # 3. Mount your config files from your home directory
 
 # Enter the container
-workspace-container enter
+wsc enter
 
 # You're now in the container with zsh, nvim, python, etc.
 # Exit with:
@@ -136,7 +136,7 @@ If the image build fails, try:
 ```bash
 # Clean up and try again
 podman system prune -a
-workspace-container build
+wsc build
 ```
 
 ### Config Files Not Mounting
@@ -157,7 +157,7 @@ cd /path/to/workspace-container
 git pull
 
 # Rebuild the image to get latest changes
-workspace-container build
+./wsc build
 ```
 
 ## Uninstallation
@@ -166,14 +166,14 @@ To remove workspace-container:
 
 ```bash
 # Destroy all containers
-workspace-container list
-workspace-container destroy <container-name>  # for each container
+wsc list
+wsc destroy <container-name>  # for each container
 
 # Remove the image
 podman rmi workspace-container
 
 # Remove the symlink (if created)
-sudo rm /usr/local/bin/workspace-container
+sudo rm /usr/local/bin/wsc
 
 # Remove the repository
 cd ..

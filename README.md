@@ -39,7 +39,7 @@ cd workspace-container
 
 2. Make the script executable (already done in repo):
 ```bash
-chmod +x workspace-container
+chmod +x wsc
 ```
 
 3. (Optional) Add to your PATH:
@@ -50,7 +50,7 @@ export PATH="$PATH:/path/to/workspace-container"
 
 Or create a symlink:
 ```bash
-sudo ln -s $(pwd)/workspace-container /usr/local/bin/workspace-container
+sudo ln -s $(pwd)/wsc /usr/local/bin/wsc
 ```
 
 ## Usage
@@ -59,13 +59,13 @@ sudo ln -s $(pwd)/workspace-container /usr/local/bin/workspace-container
 
 ```bash
 # Create the default container
-./workspace-container create
+./wsc create
 
 # Enter the container
-./workspace-container enter
+./wsc enter
 
 # When done, destroy the container
-./workspace-container destroy
+./wsc destroy
 ```
 
 ### Commands
@@ -73,58 +73,57 @@ sudo ln -s $(pwd)/workspace-container /usr/local/bin/workspace-container
 #### Create a Container
 ```bash
 # Create default container
-./workspace-container create
+./wsc create
 
 # Create a named container
-./workspace-container create myproject
+./wsc create myproject
 ```
 
 Creates a new container with the specified name (or default). On first run, this will build the Docker image with all the development tools.
 
 #### Enter a Container
 ```bash
-# Enter default container
-./workspace-container enter
+# Create default container
+./wsc create
 
-# Enter a named container
-./workspace-container enter myproject
+# Create a named container
+./wsc create myproject
 ```
 
 Enters the specified container. If the container is stopped, it will be started automatically.
 
-#### Destroy a Container
-```bash
-# Destroy default container
-./workspace-container destroy
+# Enter default container
+./wsc enter
 
+# Enter a named container
+./wsc enter myproject
 # Destroy a named container
-./workspace-container destroy myproject
+./wsc destroy myproject
 ```
 
-Stops and removes the specified container.
+# Destroy default container
+./wsc destroy
 
-#### List Containers
-```bash
-./workspace-container list
+# Destroy a named container
+./wsc destroy myproject
 ```
 
 Lists all managed containers and their status.
 
-#### Build Image
+./wsc list
 ```bash
-./workspace-container build
+./wsc build
 ```
 
-Builds or rebuilds the container image. This is automatically done on first `create` if needed.
+./wsc build
 
 #### Help
 ```bash
-./workspace-container help
-```
+./wsc help
 
 Shows usage information and available commands.
 
-## Configuration Mounting
+1. **Image Building**: The tool builds a Docker image based on Fedora 38 with all specified tools
 
 The tool automatically mounts configuration files from your home directory if they exist:
 
@@ -151,12 +150,12 @@ RUN apt-get install -y \
 
 After modifying, rebuild the image:
 ```bash
-./workspace-container build
+./wsc build
 ```
 
 ### Adding More Config Mounts
 
-Edit the `workspace-container` script and add to the `configs` array in the `create_container()` function:
+Edit the `wsc` script and add to the `configs` array in the `create_container()` function:
 
 ```bash
 local configs=(
@@ -172,31 +171,31 @@ local configs=(
 
 ```bash
 # Create separate containers for different projects
-./workspace-container create frontend-dev
-./workspace-container create backend-dev
-./workspace-container create data-science
+./wsc create frontend-dev
+./wsc create backend-dev
+./wsc create data-science
 
 # Enter the frontend container
-./workspace-container enter frontend-dev
+./wsc enter frontend-dev
 
 # List all containers
-./workspace-container list
+./wsc list
 
 # Clean up when done
-./workspace-container destroy frontend-dev
+./wsc destroy frontend-dev
 ```
 
 ### Daily Workflow
 
 ```bash
 # Morning: create and enter your workspace
-./workspace-container create
-./workspace-container enter
+./wsc create
+./wsc enter
 
 # Work on your projects with all your tools and configs...
 
 # Evening: exit (Ctrl+D or 'exit') and optionally destroy
-./workspace-container destroy
+./wsc destroy
 ```
 
 ## How It Works
@@ -239,16 +238,12 @@ If you encounter issues with the image:
 podman rmi workspace-container
 
 # Rebuild
-./workspace-container build
+./wsc build
 ```
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - feel free to use and modify as needed.
 
 ## Credits
 

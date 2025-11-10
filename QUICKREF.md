@@ -4,31 +4,31 @@
 
 ```bash
 # Create default container
-workspace-container create
+wsc create
 
 # Create named container
-workspace-container create myproject
+wsc create myproject
 
 # Enter default container
-workspace-container enter
+wsc enter
 
 # Enter named container
-workspace-container enter myproject
+wsc enter myproject
 
 # List all containers
-workspace-container list
+wsc list
 
 # Destroy default container
-workspace-container destroy
+wsc destroy
 
 # Destroy named container
-workspace-container destroy myproject
+wsc destroy myproject
 
 # Rebuild image
-workspace-container build
+wsc build
 
 # Show help
-workspace-container help
+wsc help
 ```
 
 ## Inside the Container
@@ -67,12 +67,10 @@ Ctrl+D
 
 ```
 workspace-container/
-├── workspace-container    # Main CLI tool
+├── wsc                    # Main CLI tool
 ├── Dockerfile            # Container image definition
 ├── README.md             # Full documentation
 ├── INSTALL.md            # Installation guide
-├── CONTRIBUTING.md       # Contribution guidelines
-├── LICENSE               # MIT License
 └── example.sh            # Usage examples
 ```
 
@@ -81,50 +79,51 @@ workspace-container/
 ### Daily Development
 ```bash
 # Morning: start working
-workspace-container create
-workspace-container enter
+wsc create
+wsc enter
 
 # Work on your projects...
 
 # Evening: clean up
 exit
-workspace-container destroy
+wsc destroy
 ```
 
 ### Multiple Projects
 ```bash
 # Set up different environments
-workspace-container create frontend
-workspace-container create backend
-workspace-container create testing
+wsc create frontend
+wsc create backend
+wsc create testing
 
 # Switch between them
-workspace-container enter frontend
+wsc enter frontend
 # ... work ...
 exit
 
-workspace-container enter backend
+# wsc enter backend
+wsc enter backend
 # ... work ...
 exit
 
 # Clean up when done
-workspace-container destroy frontend
-workspace-container destroy backend
-workspace-container destroy testing
+wsc destroy frontend
+wsc destroy backend
+wsc destroy testing
 ```
 
 ### Temporary Experiments
 ```bash
 # Create temporary workspace
-workspace-container create experiment
+wsc create experiment
 
 # Try things out
-workspace-container enter experiment
+wsc enter experiment
 # ... experiment ...
 exit
 
 # Clean up
-workspace-container destroy experiment
+wsc destroy experiment
 ```
 
 ## Configuration
@@ -180,7 +179,7 @@ podman rm -f workspace-default
 
 ```bash
 # Built-in help
-workspace-container help
+wsc help
 
 # Community help
 - Open an issue on GitHub

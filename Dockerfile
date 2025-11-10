@@ -1,10 +1,8 @@
-FROM ubuntu:22.04
+# Use Fedora base image
+FROM fedora:38
 
-# Prevent interactive prompts during package installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Update and install base packages
-RUN apt-get update && apt-get install -y \
+# Install packages via dnf
+RUN dnf -y update && dnf -y install \
     curl \
     wget \
     git \
@@ -12,15 +10,15 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     neovim \
-    tshark \
+    wireshark-cli \
     tcpdump \
     sudo \
-    locales \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    glibc-langpack-en \
+    passwd \
+    util-linux-user \
+    && dnf -y clean all
 
-# Set up locale
-RUN locale-gen en_US.UTF-8
+# Set locale env
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
@@ -34,18 +32,24 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Switch to the user
+# Copy helper CLI into image and make executable
+# (copied before switching to non-root user)
+COPY wsc /usr/local/bin/wsc
+RUN chmod +x /usr/local/bin/wsc || true
+
+# Switch to the non-root user
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
-# Install Oh My Zsh
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+# Install Oh My Zsh (as non-root user)
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || true
 
-# Set zsh as the default shell
-RUN sudo chsh -s $(which zsh) $USERNAME
+# Set zsh as the default shell for the user
+RUN sudo chsh -s $(which zsh) $USERNAME || true
 
 # Set default editor to nvim
 ENV EDITOR=nvim
 ENV VISUAL=nvim
 
-CMD ["/bin/zsh"]
+# Default command starts the wsc helper
+CMD ["wsc"]
