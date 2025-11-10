@@ -60,5 +60,5 @@ RUN sudo chsh -s $(which zsh) $USERNAME || true
 ENV EDITOR=nvim
 ENV VISUAL=nvim
 
-# Default command starts the wsc helper
-CMD ["wsc"]
+# Default command keeps container alive; shell is provided via `podman exec`/`wsc enter`
+CMD ["tail", "-f", "/dev/null"]
